@@ -913,8 +913,12 @@ static const int kPortaitKeyboardHeight = 216;
         if (self.robot && !self.robot.isSimulated && self.robot.isConnected) {
             [self.robot tiltByAngle:sign * angle
                          completion:^(BOOL success) {
-                             [self.robot stopTilting];
-                             [self finishedAction];
+                             // Cancellation can arrive on the Romotions queue.
+                             // Resume the script and its UI on the main queue.
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 [self.robot stopTilting];
+                                 [self finishedAction];
+                             });
                          }];
         } else {
             [self finishedAction];
@@ -927,8 +931,12 @@ static const int kPortaitKeyboardHeight = 216;
         if (self.robot && !self.robot.isSimulated && self.robot.isConnected) {
             [self.robot tiltToAngle:angle
                          completion:^(BOOL success) {
-                             [self.robot stopTilting];
-                             [self finishedAction];
+                             // Cancellation can arrive on the Romotions queue.
+                             // Resume the script and its UI on the main queue.
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 [self.robot stopTilting];
+                                 [self finishedAction];
+                             });
                          }];
         } else {
             [self finishedAction];
